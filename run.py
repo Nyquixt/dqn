@@ -68,6 +68,7 @@ if __name__ == '__main__':
     parser.add_argument('--lr', type=float, default=0.0001, help='Learning rate')
     parser.add_argument('--batch', type=int, default=32, help='Batch size')
     parser.add_argument('--learn_start', type=int, default=10000, help='Learning starts after this number of frames')
+    parser.add_argument('--num_steps', type=int, default=100000, help='Max frames for training')
 
     args = parser.parse_args()
     device = torch.device('cuda' if args.cuda else 'cpu')
@@ -141,5 +142,9 @@ if __name__ == '__main__':
         loss_t = calc_loss(batch, net, target_net, 0.99, device)
         loss_t.backward()
         optimizer.step()
+        
+        if frame_cnt == args.num_steps:
+            print('Restored with model of mean reward ' + str(best_mean_reward))
+            break
 
     writer.close()
